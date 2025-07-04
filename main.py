@@ -15,9 +15,10 @@ load_dotenv()
 app = FastAPI()
 """Basic connection example.
 """
+app.mount("/static", StaticFiles(directory="static"), name="static")
+templates = Jinja2Templates(directory="templates")
 
-import redis
-
+# Redis Cloud connection
 r = redis.Redis(
     host='redis-19010.crce179.ap-south-1-1.ec2.redns.redis-cloud.com',
     port=19010,
@@ -25,19 +26,6 @@ r = redis.Redis(
     username="default",
     password="kfkIYdgxoAHrUNnzsTRtPrwyki2zUEI7",
 )
-
-success = r.set('foo', 'bar')
-# True
-
-result = r.get('foo')
-print(result)
-# >>> bar
-
-templates = Jinja2Templates(directory="templates")
-
-# Serve static files (optional: if using CSS/JS later)
-app.mount("/static", StaticFiles(directory="static"), name="static")
-
 # Show form
 @app.get("/", response_class=HTMLResponse)
 def show_form(request: Request):
@@ -112,23 +100,4 @@ def verify_otp(data: OTPVerify):
 # EMAIL_FROM=svceshop@gmail.com
 # EMAIL_PASSWORD=mqnpzzfqcaqnglry
 
-"""Basic connection example.
-"""
-
-import redis
-
-r = redis.Redis(
-    host='redis-19010.crce179.ap-south-1-1.ec2.redns.redis-cloud.com',
-    port=19010,
-    decode_responses=True,
-    username="default",
-    password="kfkIYdgxoAHrUNnzsTRtPrwyki2zUEI7",
-)
-
-success = r.set('foo', 'bar')
-# True
-
-result = r.get('foo')
-print(result)
-# >>> bar
 
