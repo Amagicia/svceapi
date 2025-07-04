@@ -13,6 +13,16 @@ load_dotenv()
 
 # Init app + redis + templates
 app = FastAPI()
+from fastapi.middleware.cors import CORSMiddleware
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # or ["http://localhost:3000"] for specific frontend
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 """Basic connection example.
 """
 app.mount("/static", StaticFiles(directory="static"), name="static")
@@ -80,7 +90,7 @@ def send_otp(data: EmailRequest, bg: BackgroundTasks):
         r.incr(key)
         r.expire(key, 3600)  # 1 hour limit window
 
-    otp = str(random.randint(100000, 999999))
+    otp = str(random.randint(1000,9999))
     r.setex(f"otp:{email}", 120, otp)  # 2 min OTP expiry
     bg.add_task(send_email_otp, email, otp)
     return {"message": "OTP sent to your email"}
