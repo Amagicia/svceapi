@@ -1,0 +1,72 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Email OTP</title>
+  <style>
+    body { font-family: Arial; padding: 40px; }
+    input, button { padding: 10px; width: 100%; margin: 8px 0; }
+    .box { max-width: 400px; margin: auto; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h2>📩 Verify Email</h2>
+    <input id="email" type="email" placeholder="Enter email" />
+    <p id="timer" style="font-weight: bold; color: red;"></p>
+
+    <button onclick="sendOTP()">Send OTP</button>
+
+    <div id="otpBox" style="display:none;">
+      <input id="otp" type="text" placeholder="Enter OTP" />
+      <button onclick="verifyOTP()">Verify OTP</button>
+    </div>
+
+    <p id="msg"></p>
+  </div>
+
+  <script>
+let countdown;
+function startCountdown(seconds) {
+  clearInterval(countdown);
+  let time = seconds;
+  countdown = setInterval(() => {
+    const min = Math.floor(time / 60);
+    const sec = time % 60;
+    document.getElementById("timer").textContent = `⏳ OTP expires in ${min}:${sec.toString().padStart(2, '0')}`;
+    if (time <= 0) {
+      clearInterval(countdown);
+      document.getElementById("timer").textContent = "⛔ OTP expired. Request a new one.";
+    }
+    time--;
+  }, 1000);
+}
+
+async function sendOTP() {
+  const email = document.getElementById("email").value;
+  const res = await fetch("/send-otp/", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email })
+  });
+  const data = await res.json();
+  document.getElementById("msg").textContent = data.message || data.detail;
+  if (res.ok) {
+    document.getElementById("otpBox").style.display = "block";
+    startCountdown(120); // 2 minutes
+  }
+}
+    async function verifyOTP() {
+      const email = document.getElementById('email').value;
+      const otp = document.getElementById('otp').value;
+      const res = await fetch('/verify-otp/', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp })
+      });
+      const data = await res.json();
+      document.getElementById("msg").textContent = data.message || data.error;
+    }
+  </script>
+</body>
+</html>
