@@ -13,7 +13,26 @@ load_dotenv()
 
 # Init app + redis + templates
 app = FastAPI()
-r = redis.Redis.from_url(os.getenv("REDIS_URL"), decode_responses=True)
+"""Basic connection example.
+"""
+
+import redis
+
+r = redis.Redis(
+    host='redis-19010.crce179.ap-south-1-1.ec2.redns.redis-cloud.com',
+    port=19010,
+    decode_responses=True,
+    username="default",
+    password="kfkIYdgxoAHrUNnzsTRtPrwyki2zUEI7",
+)
+
+success = r.set('foo', 'bar')
+# True
+
+result = r.get('foo')
+print(result)
+# >>> bar
+
 templates = Jinja2Templates(directory="templates")
 
 # Serve static files (optional: if using CSS/JS later)
@@ -89,3 +108,27 @@ def verify_otp(data: OTPVerify):
         return {"error": "Invalid OTP"}
     r.delete(f"otp:{data.email}")
     return {"message": "OTP verified"}
+# REDIS_URL=redis://localhost:6379
+# EMAIL_FROM=svceshop@gmail.com
+# EMAIL_PASSWORD=mqnpzzfqcaqnglry
+
+"""Basic connection example.
+"""
+
+import redis
+
+r = redis.Redis(
+    host='redis-19010.crce179.ap-south-1-1.ec2.redns.redis-cloud.com',
+    port=19010,
+    decode_responses=True,
+    username="default",
+    password="kfkIYdgxoAHrUNnzsTRtPrwyki2zUEI7",
+)
+
+success = r.set('foo', 'bar')
+# True
+
+result = r.get('foo')
+print(result)
+# >>> bar
+
